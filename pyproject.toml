@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "space-invaders"
+version = "1.0.0"
+description = "A retro Space Invaders homage created with Pygame"
+authors = ["Ian <your@email.com>"]
+readme = "README.md"
+packages = [{include = "space_invaders", from = "."}]
+
+[tool.poetry.dependencies]
+python = ">=3.8"
+pygame = "^2.5.0"
+numpy = "^1.24.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.1"
+
+[tool.poetry.scripts]
+invaders = "space_invaders.main:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
