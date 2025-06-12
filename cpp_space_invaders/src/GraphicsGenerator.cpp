@@ -168,48 +168,25 @@ std::shared_ptr<SDL_Texture> GraphicsGenerator::createAlternateFrame(std::shared
 std::shared_ptr<SDL_Texture> GraphicsGenerator::createMysteryShip() {
     SDL_Surface* surface = createRGBASurface(MYSTERY_SHIP_WIDTH, MYSTERY_SHIP_HEIGHT);
     
-    // UFO body (ellipse approximation)
-    SDL_Rect ellipseRect = {0, MYSTERY_SHIP_HEIGHT / 3, 
-                          MYSTERY_SHIP_WIDTH, MYSTERY_SHIP_HEIGHT / 2};
-                          
-    // Approximation of an ellipse using scanlines
-    for (int y = ellipseRect.y; y < ellipseRect.y + ellipseRect.h; y++) {
-        double relY = (y - (ellipseRect.y + ellipseRect.h / 2.0)) / (ellipseRect.h / 2.0);
-        double width = std::sqrt(1.0 - relY * relY) * ellipseRect.w / 2.0;
-        
-        int startX = ellipseRect.x + ellipseRect.w / 2 - static_cast<int>(width);
-        int endX = ellipseRect.x + ellipseRect.w / 2 + static_cast<int>(width);
-        
-        for (int x = startX; x <= endX; x++) {
-            setPixel(surface, x, y, RED);
-        }
-    }
+    // Use RED for mystery ship like in original game
+    Uint32 color = SDL_MapRGBA(surface->format, RED.r, RED.g, RED.b, RED.a);
     
-    // UFO top dome
-    SDL_Rect domeRect = {MYSTERY_SHIP_WIDTH / 4, 0, 
-                        MYSTERY_SHIP_WIDTH / 2, MYSTERY_SHIP_HEIGHT / 2};
-                        
-    // Approximate semicircle for dome
-    for (int y = domeRect.y; y < domeRect.y + domeRect.h; y++) {
-        double relY = (y - domeRect.y) / static_cast<double>(domeRect.h);
-        double width = std::sin(relY * M_PI / 2) * domeRect.w / 2.0;
-        
-        int startX = domeRect.x + domeRect.w / 2 - static_cast<int>(width);
-        int endX = domeRect.x + domeRect.w / 2 + static_cast<int>(width);
-        
-        for (int x = startX; x <= endX; x++) {
-            setPixel(surface, x, y, RED);
-        }
-    }
+    // Create UFO shape with simple geometry (oval shape)
+    int centerX = MYSTERY_SHIP_WIDTH / 2;
+    int centerY = MYSTERY_SHIP_HEIGHT / 2;
+    int radiusX = MYSTERY_SHIP_WIDTH / 2;
+    int radiusY = MYSTERY_SHIP_HEIGHT / 3;
     
-    // Windows
-    int windowSize = MYSTERY_SHIP_WIDTH / 10;
-    for (int i = 0; i < 3; i++) {
-        int windowX = MYSTERY_SHIP_WIDTH / 4 + i * (MYSTERY_SHIP_WIDTH / 4);
-        int windowY = MYSTERY_SHIP_HEIGHT / 2;
-        SDL_Rect windowRect = {windowX, windowY, windowSize, windowSize};
-        SDL_FillRect(surface, &windowRect, 
-                     SDL_MapRGBA(surface->format, YELLOW.r, YELLOW.g, YELLOW.b, YELLOW.a));
+    // Draw oval body
+    for (int y = 0; y < MYSTERY_SHIP_HEIGHT; y++) {
+        for (int x = 0; x < MYSTERY_SHIP_WIDTH; x++) {
+            float normalizedX = static_cast<float>(x - centerX) / radiusX;
+            float normalizedY = static_cast<float>(y - centerY) / radiusY;
+            
+            if (normalizedX * normalizedX + normalizedY * normalizedY <= 1.0f) {
+                setPixel(surface, x, y, RED);
+            }
+        }
     }
     
     auto texture = createTextureFromSurface(surface);
@@ -272,14 +249,14 @@ std::shared_ptr<SDL_Texture> GraphicsGenerator::createExplosion(int size) {
     std::uniform_int_distribution<> radiusDist(1, size / 5);
     std::uniform_int_distribution<> colorDist(0, 2);
     
-    const Color colors[] = {YELLOW, RED, WHITE};
+    const SDL_Color colors[] = {YELLOW, RED, WHITE};
     
     int numParticles = 20;
     for (int i = 0; i < numParticles; i++) {
         int x = posDist(gen);
         int y = posDist(gen);
         int radius = radiusDist(gen);
-        Color color = colors[colorDist(gen)];
+        SDL_Color color = colors[colorDist(gen)];
         
         // Draw a filled circle
         for (int cy = -radius; cy <= radius; cy++) {
@@ -347,7 +324,7 @@ std::shared_ptr<SDL_Texture> GraphicsGenerator::createBullet(int bulletType) {
     }
 }
 
-std::shared_ptr<SDL_Texture> GraphicsGenerator::createTextSurface(const std::string& text, int size, const Color& color) {
+std::shared_ptr<SDL_Texture> GraphicsGenerator::createTextSurface(const std::string& text, int size, const SDL_Color& color) {
     TTF_Font* font = TTF_OpenFont("assets/fonts/courier.ttf", size);
     if (!font) {
         // Fall back to a system font if the file is not found
@@ -488,7 +465,7 @@ SDL_Surface* GraphicsGenerator::createRGBASurface(int width, int height) {
     return surface;
 }
 
-void GraphicsGenerator::setPixel(SDL_Surface* surface, int x, int y, const Color& color) {
+void GraphicsGenerator::setPixel(SDL_Surface* surface, int x, int y, const SDL_Color& color) {
     if (x < 0 || x >= surface->w || y < 0 || y >= surface->h) {
         return;
     }
@@ -498,7 +475,7 @@ void GraphicsGenerator::setPixel(SDL_Surface* surface, int x, int y, const Color
     pixels[y * surface->w + x] = pixel;
 }
 
-Color GraphicsGenerator::getPixel(SDL_Surface* surface, int x, int y) {
+SDL_Color GraphicsGenerator::getPixel(SDL_Surface* surface, int x, int y) {
     if (x < 0 || x >= surface->w || y < 0 || y >= surface->h) {
         return {0, 0, 0, 0};
     }

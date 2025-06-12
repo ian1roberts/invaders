@@ -19,6 +19,7 @@ public:
     int hit();
     
     bool isActive() const { return active; }
+    bool isVisibleOnScreen(int screenWidth) const; // New method to check if ship is visible
     
 private:
     int speed;

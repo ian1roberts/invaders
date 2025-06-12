@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SDL2/SDL.h>
 #include <string>
 #include <array>
 #include <filesystem>
@@ -9,25 +10,24 @@ namespace SpaceInvaders {
 // Screen dimensions
 constexpr int SCREEN_WIDTH = 800;
 constexpr int SCREEN_HEIGHT = 600;
-const std::string SCREEN_TITLE = "Space Invaders (C++ Version)";
+const std::string SCREEN_TITLE = "Space Invaders";
+
+// Colors - Updated to match original arcade scheme
+const SDL_Color GREEN = {50, 255, 63, 255};   // Bright phosphorous-green like arcade overlay
+const SDL_Color WHITE = {255, 255, 255, 255};
+const SDL_Color BLACK = {0, 0, 0, 255};
+const SDL_Color RED = {255, 0, 0, 255};       // For mystery ship
+const SDL_Color BLUE = {0, 162, 232, 255};    // For special effects
+const SDL_Color PINK = {255, 105, 180, 255};  // For contrasting elements
+const SDL_Color YELLOW = {255, 255, 0, 255};  // For scoring
+
+// FPS settings
 constexpr int FPS = 60;
 constexpr float FRAME_TIME = 1.0f / static_cast<float>(FPS);
 
-// Colors (RGBA format)
-struct Color {
-    uint8_t r, g, b, a;
-};
-
-constexpr Color BLACK = {0, 0, 0, 255};
-constexpr Color WHITE = {255, 255, 255, 255};
-constexpr Color GREEN = {0, 255, 0, 255};
-constexpr Color RED = {255, 0, 0, 255};
-constexpr Color BLUE = {0, 0, 255, 255};
-constexpr Color YELLOW = {255, 255, 0, 255};
-
-// Game area
+// Game area dimensions
 constexpr int GAME_AREA_MARGIN_X = 50;
-constexpr int GAME_AREA_MARGIN_Y = 50;
+constexpr int GAME_AREA_MARGIN_Y = 80;
 constexpr int GAME_AREA_WIDTH = SCREEN_WIDTH - (2 * GAME_AREA_MARGIN_X);
 constexpr int GAME_AREA_HEIGHT = SCREEN_HEIGHT - (2 * GAME_AREA_MARGIN_Y);
 
@@ -76,30 +76,30 @@ constexpr int MYSTERY_SHIP_SPEED = 3;
 constexpr std::array<int, 4> MYSTERY_SHIP_POINTS = {50, 100, 150, 300};
 constexpr float MYSTERY_SHIP_APPEAR_CHANCE = 0.001f;
 
-// Score points
-constexpr int SCORE_INVADER_TOP_ROW = 30;
-constexpr int SCORE_INVADER_MIDDLE_ROW = 20;
+// Scoring
 constexpr int SCORE_INVADER_BOTTOM_ROW = 10;
+constexpr int SCORE_INVADER_MIDDLE_ROW = 20;
+constexpr int SCORE_INVADER_TOP_ROW = 30;
 
 // Font sizes
-constexpr int FONT_LARGE = 36;
-constexpr int FONT_MEDIUM = 24;
 constexpr int FONT_SMALL = 16;
+constexpr int FONT_MEDIUM = 24;
+constexpr int FONT_LARGE = 36;
 
-// Game states
+// High score settings
+constexpr int HIGH_SCORE_COUNT = 10;
+constexpr int HIGH_SCORE_NAME_LENGTH = 3;
+const std::string HIGH_SCORE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ";
+const std::string HIGH_SCORE_FILE = ".space_invaders_scores";
+
+// Game state enum
 enum class GameState {
     ATTRACT,
     PLAYING,
     GAME_OVER,
-    LEVEL_TRANSITION,
     HIGH_SCORE_ENTRY,
-    HALL_OF_FAME
+    HALL_OF_FAME,
+    LEVEL_TRANSITION
 };
-
-// High score settings
-constexpr int HIGH_SCORE_COUNT = 10;
-constexpr int HIGH_SCORE_NAME_LENGTH = 5;
-const std::string HIGH_SCORE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=<>?.";
-const std::string HIGH_SCORE_FILE = ".space_invaders_scores";
 
 } // namespace SpaceInvaders

@@ -31,7 +31,7 @@ private:
     Mix_Chunk* generateMysteryShip();
     Mix_Chunk* generateMysteryShipHit();
     Mix_Chunk* generateGameOver();
-    Mix_Chunk* generateInvaderMovementSounds();
+    Mix_Chunk* generateInvaderMovementSound(int noteIndex);
     
     // Helper methods for sound wave generation
     std::vector<int16_t> generateSineWave(float frequency, float duration, float amplitude = 0.5f);

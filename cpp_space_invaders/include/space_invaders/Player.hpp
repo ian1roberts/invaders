@@ -24,6 +24,7 @@ public:
     
     bool isAlive() const { return alive; }
     int getLives() const { return lives; }
+    void setLives(int newLives) { lives = newLives; }
     
 private:
     int speed;

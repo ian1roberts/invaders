@@ -74,4 +74,10 @@ int MysteryShip::hit() {
     return points[pointsDist(rng)];
 }
 
+bool MysteryShip::isVisibleOnScreen(int screenWidth) const {
+    // Ship is visible if it's active and at least partially on screen
+    return active && 
+           ((x + width > 0) && (x < screenWidth));
+}
+
 } // namespace SpaceInvaders

@@ -146,10 +146,18 @@ bool InvaderGroup::move(uint32_t currentTime, const Rectangle& gameArea) {
 void InvaderGroup::invaderKilled() {
     invadersKilled++;
     
-    // Increase speed as invaders are killed
+    // Improve speed increase calculations using a more exponential curve
+    // This will create the dramatic acceleration effect of the original
     float remaining = totalInvaders - invadersKilled;
-    float speedFactor = 1.0f - (remaining / totalInvaders);
-    moveDelay = std::max(100, 1000 - static_cast<int>(900 * speedFactor));  // Min 100ms delay
+    float percentKilled = 1.0f - (remaining / totalInvaders);
+    
+    // Exponential speed increase - starts slow, then dramatically speeds up
+    // as last invaders remain (matching arcade behavior)
+    float speedFactor = std::exp(percentKilled * 2.5f) - 1.0f;
+    speedFactor = std::min(speedFactor, 9.0f); // Cap at 9x speed increase
+    
+    // Calculate delay based on speedFactor - minimum 50ms for extreme difficulty at the end
+    moveDelay = std::max(50, static_cast<int>(1000 / (1.0f + speedFactor)));
 }
 
 bool InvaderGroup::anyInvaderAtBottom(int bottomY) const {

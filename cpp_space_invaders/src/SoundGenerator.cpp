@@ -3,6 +3,7 @@
 #include <random>
 #include <stdexcept>
 #include <SDL2/SDL.h>
+#include <array>
 
 namespace SpaceInvaders {
 
@@ -40,7 +41,12 @@ void SoundGenerator::generateAllSounds() {
     sounds["mystery_ship"] = generateMysteryShip();
     sounds["mystery_ship_hit"] = generateMysteryShipHit();
     sounds["game_over"] = generateGameOver();
-    sounds["invader_movement"] = generateInvaderMovementSounds();
+    
+    // Generate the 4 movement sounds for the iconic descending bass sequence
+    sounds["invader_movement0"] = generateInvaderMovementSound(0);
+    sounds["invader_movement1"] = generateInvaderMovementSound(1);
+    sounds["invader_movement2"] = generateInvaderMovementSound(2);
+    sounds["invader_movement3"] = generateInvaderMovementSound(3);
 }
 
 void SoundGenerator::playSound(const std::string& soundName) {
@@ -50,14 +56,11 @@ void SoundGenerator::playSound(const std::string& soundName) {
 }
 
 void SoundGenerator::stopSound(const std::string& soundName) {
-    // This is a simplification - to properly stop a specific sound instance,
-    // we'd need to track channel assignments, but this works for our case
-    if (soundName == "mystery_ship") {
-        // Find the channel playing the mystery ship sound and halt it
-        for (int i = 0; i < 8; i++) {
-            if (Mix_GetChunk(i) == sounds[soundName]) {
+    if (sounds.find(soundName) != sounds.end() && sounds[soundName]) {
+        // Find all channels playing this sound and halt them
+        for (int i = 0; i < Mix_AllocateChannels(-1); i++) {
+            if (Mix_Playing(i) && Mix_GetChunk(i) == sounds[soundName]) {
                 Mix_HaltChannel(i);
-                break;
             }
         }
     }
@@ -329,27 +332,31 @@ Mix_Chunk* SoundGenerator::generateGameOver() {
     return createChunkFromSamples(waveform);
 }
 
-Mix_Chunk* SoundGenerator::generateInvaderMovementSounds() {
-    // Create the classic "step" sounds that cycle during gameplay
+Mix_Chunk* SoundGenerator::generateInvaderMovementSound(int noteIndex) {
+    // Create one of the four distinct notes in the iconic Space Invaders movement pattern
     int sampleRate = 44100;
-    float duration = 0.1f;  // seconds
+    // We keep the sound duration shorter for better playback quality
+    // but this won't affect the movement timing which is handled separately in Game.cpp
+    float duration = 0.8f;  // shorter duration for better sound quality
     int samples = static_cast<int>(sampleRate * duration);
     
-    // We'll create a simple version for now
-    // In a full implementation, we'd create 4 variations of the sound
-    int baseFreq = 160;  // Just use one frequency for simplicity
+    // The four frequencies used in the original game (approximated)
+    // These notes create the iconic descending bass line
+    std::array<float, 4> frequencies = { 550.0f, 440.0f, 330.0f, 220.0f };
+    float baseFreq = frequencies[noteIndex]; // Use the specified note
     
     std::vector<int16_t> waveform(samples);
     
     for (int i = 0; i < samples; i++) {
         float t = static_cast<float>(i) / sampleRate;
         
-        // Simple sine wave with slight pitch shift
-        float wave = std::sin(2.0f * M_PI * baseFreq * t);
+        // Simple square wave like the original arcade sounds
+        // Reduced volume by factor of 2 (from 0.8 to 0.4)
+        float signal = (std::sin(2.0f * M_PI * baseFreq * t) > 0) ? 0.2f : -0.2f;
         
-        // Apply quick decay
-        float envelope = std::exp(-20.0f * t);
-        wave = wave * envelope * 0.8f;
+        // Apply quick decay to match arcade sound
+        float envelope = std::exp(-4.0f * t); // Slightly gentler decay for the shorter sound
+        float wave = signal * envelope;
         
         // Convert to 16-bit
         waveform[i] = static_cast<int16_t>(wave * 32767.0f);
