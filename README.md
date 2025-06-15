@@ -16,16 +16,21 @@ This is a Python and C++ implementation of the classic arcade game Space Invader
 
 ## Installation
 
-### Python
+### Python Quickstart 
 
 ```bash
-# Install with pip
-pip install space-invaders
-
-# Or install from source
+# Clone the repository
 git clone https://github.com/yourusername/space-invaders.git
 cd space-invaders
-pip install -e .
+
+# Install using Poetry
+poetry install
+
+# Activate the Poetry environment
+poetry shell
+
+# Run the game
+invaders
 ```
 
 ## How to Play
@@ -33,11 +38,11 @@ pip install -e .
 Once installed, you can run the game using:
 
 ```bash
-# If installed via pip:
-invaders
+# Using Poetry
+poetry run invaders
 
-# Or run the module directly:
-python -m space_invaders.main
+# Or from within a Poetry shell
+invaders
 ```
 
 ### Controls
@@ -49,9 +54,9 @@ python -m space_invaders.main
 
 ## Dependencies
 
-- Python 3.8+
+- Python 3.9+
 - Pygame 2.5.0+
-- NumPy 1.24.0+
+- NumPy 1.26.0+
 
 ## Development
 
@@ -63,6 +68,12 @@ poetry install
 
 # Run the game
 poetry run invaders
+
+# Add new dependencies
+poetry add package-name
+
+# Update dependencies
+poetry update
 ```
 
 ### C++

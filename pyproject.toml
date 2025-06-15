@@ -2,14 +2,20 @@
 name = "space-invaders"
 version = "1.0.0"
 description = "A retro Space Invaders homage created with Pygame"
-authors = ["Ian <your@email.com>"]
+authors = ["Ian <ian.roberts@cantab.net>"]
 readme = "README.md"
 packages = [{include = "space_invaders", from = "."}]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Games/Entertainment :: Arcade",
+]
 
 [tool.poetry.dependencies]
-python = ">=3.8"
+python = ">=3.9,<3.13"  # Updated to match NumPy 1.26.x requirements
 pygame = "^2.5.0"
-numpy = "^1.24.0"
+numpy = "^1.26.0"  # Updated to use more recent numpy version
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.3.1"
