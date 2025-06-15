@@ -4,7 +4,7 @@ A retro Space Invaders homage created with Pygame.
 
 ## Description
 
-This is a Python implementation of the classic arcade game Space Invaders, created entirely from scratch using Pygame. All graphics and sound effects are generated procedurally without using any external assets.
+This is a Python and C++ implementation of the classic arcade game Space Invaders, created entirely from scratch using Pygame. All graphics and sound effects are generated procedurally without using any external assets. What's more ... Claude Sonnet 3.7 wrote it all with a few wacky prompts ...
 
 ## Features
 
@@ -15,6 +15,8 @@ This is a Python implementation of the classic arcade game Space Invaders, creat
 - Score tracking with high score
 
 ## Installation
+
+### Python
 
 ```bash
 # Install with pip
@@ -62,6 +64,17 @@ poetry install
 # Run the game
 poetry run invaders
 ```
+
+### C++
+
+Create a build directory, and make
+
+```bash
+mkdir build && cd build
+cmake ..
+make -j4
+```
+Launch the gave with `./SpaceInvaders`
 
 ## License
 

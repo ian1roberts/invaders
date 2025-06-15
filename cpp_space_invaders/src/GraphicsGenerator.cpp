@@ -249,14 +249,14 @@ std::shared_ptr<SDL_Texture> GraphicsGenerator::createExplosion(int size) {
     std::uniform_int_distribution<> radiusDist(1, size / 5);
     std::uniform_int_distribution<> colorDist(0, 2);
     
-    const SDL_Color colors[] = {YELLOW, RED, WHITE};
+    const Color colors[] = {YELLOW, RED, WHITE};
     
     int numParticles = 20;
     for (int i = 0; i < numParticles; i++) {
         int x = posDist(gen);
         int y = posDist(gen);
         int radius = radiusDist(gen);
-        SDL_Color color = colors[colorDist(gen)];
+        Color color = colors[colorDist(gen)];
         
         // Draw a filled circle
         for (int cy = -radius; cy <= radius; cy++) {
@@ -324,7 +324,7 @@ std::shared_ptr<SDL_Texture> GraphicsGenerator::createBullet(int bulletType) {
     }
 }
 
-std::shared_ptr<SDL_Texture> GraphicsGenerator::createTextSurface(const std::string& text, int size, const SDL_Color& color) {
+std::shared_ptr<SDL_Texture> GraphicsGenerator::createTextSurface(const std::string& text, int size, const Color& color) {
     TTF_Font* font = TTF_OpenFont("assets/fonts/courier.ttf", size);
     if (!font) {
         // Fall back to a system font if the file is not found
@@ -465,7 +465,7 @@ SDL_Surface* GraphicsGenerator::createRGBASurface(int width, int height) {
     return surface;
 }
 
-void GraphicsGenerator::setPixel(SDL_Surface* surface, int x, int y, const SDL_Color& color) {
+void GraphicsGenerator::setPixel(SDL_Surface* surface, int x, int y, const Color& color) {
     if (x < 0 || x >= surface->w || y < 0 || y >= surface->h) {
         return;
     }
@@ -475,7 +475,7 @@ void GraphicsGenerator::setPixel(SDL_Surface* surface, int x, int y, const SDL_C
     pixels[y * surface->w + x] = pixel;
 }
 
-SDL_Color GraphicsGenerator::getPixel(SDL_Surface* surface, int x, int y) {
+Color GraphicsGenerator::getPixel(SDL_Surface* surface, int x, int y) {
     if (x < 0 || x >= surface->w || y < 0 || y >= surface->h) {
         return {0, 0, 0, 0};
     }

@@ -375,29 +375,12 @@ void Game::update(float deltaTime) {
                 mysteryShip->activate(SCREEN_WIDTH);
                 lastMysteryShipTime = currentTime;
                 mysteryShipDelay = 15000 + rand() % 15000;
-                // Don't play sound yet - wait until ship is visible
+                soundGenerator.playSound("mystery_ship");
             }
         } else {
             mysteryShip->update(SCREEN_WIDTH);
-            
-            // Handle sound based on visibility, not just active status
-            bool isVisible = mysteryShip->isVisibleOnScreen(SCREEN_WIDTH);
-            static bool wasVisible = false;
-            
-            // Start sound when ship becomes visible
-            if (isVisible && !wasVisible) {
-                soundGenerator.playSound("mystery_ship");
-            }
-            // Stop sound when no longer visible
-            else if (!isVisible && wasVisible) {
-                soundGenerator.stopSound("mystery_ship");
-            }
-            
-            wasVisible = isVisible;
-            
-            // Check if mystery ship is completely gone
             if (!mysteryShip->isActive()) {
-                wasVisible = false;
+                soundGenerator.stopSound("mystery_ship");
             }
         }
         

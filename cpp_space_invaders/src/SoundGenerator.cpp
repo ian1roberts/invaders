@@ -3,7 +3,6 @@
 #include <random>
 #include <stdexcept>
 #include <SDL2/SDL.h>
-#include <array>
 
 namespace SpaceInvaders {
 
@@ -56,11 +55,14 @@ void SoundGenerator::playSound(const std::string& soundName) {
 }
 
 void SoundGenerator::stopSound(const std::string& soundName) {
-    if (sounds.find(soundName) != sounds.end() && sounds[soundName]) {
-        // Find all channels playing this sound and halt them
-        for (int i = 0; i < Mix_AllocateChannels(-1); i++) {
-            if (Mix_Playing(i) && Mix_GetChunk(i) == sounds[soundName]) {
+    // This is a simplification - to properly stop a specific sound instance,
+    // we'd need to track channel assignments, but this works for our case
+    if (soundName == "mystery_ship") {
+        // Find the channel playing the mystery ship sound and halt it
+        for (int i = 0; i < 8; i++) {
+            if (Mix_GetChunk(i) == sounds[soundName]) {
                 Mix_HaltChannel(i);
+                break;
             }
         }
     }
@@ -335,9 +337,7 @@ Mix_Chunk* SoundGenerator::generateGameOver() {
 Mix_Chunk* SoundGenerator::generateInvaderMovementSound(int noteIndex) {
     // Create one of the four distinct notes in the iconic Space Invaders movement pattern
     int sampleRate = 44100;
-    // We keep the sound duration shorter for better playback quality
-    // but this won't affect the movement timing which is handled separately in Game.cpp
-    float duration = 0.8f;  // shorter duration for better sound quality
+    float duration = 0.15f;  // seconds - slightly longer for lower pitch
     int samples = static_cast<int>(sampleRate * duration);
     
     // The four frequencies used in the original game (approximated)
@@ -351,11 +351,10 @@ Mix_Chunk* SoundGenerator::generateInvaderMovementSound(int noteIndex) {
         float t = static_cast<float>(i) / sampleRate;
         
         // Simple square wave like the original arcade sounds
-        // Reduced volume by factor of 2 (from 0.8 to 0.4)
-        float signal = (std::sin(2.0f * M_PI * baseFreq * t) > 0) ? 0.2f : -0.2f;
+        float signal = (std::sin(2.0f * M_PI * baseFreq * t) > 0) ? 0.8f : -0.8f;
         
         // Apply quick decay to match arcade sound
-        float envelope = std::exp(-4.0f * t); // Slightly gentler decay for the shorter sound
+        float envelope = std::exp(-12.0f * t);
         float wave = signal * envelope;
         
         // Convert to 16-bit
